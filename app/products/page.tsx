@@ -5,7 +5,7 @@ import ProductsContainer from '@/components/products/ProductsContainer';
 type SearchParams = { layout?: string; search?: string };
 
 export default function ProductsPage(props: { searchParams: SearchParams }) {
-  // @ts-expect-error
+  // @ts-expect-error - This is a hack to get around the fact that `use` is not typed
   const searchParams: SearchParams = use(props.searchParams);
 
   const layout = searchParams.layout || 'grid';
