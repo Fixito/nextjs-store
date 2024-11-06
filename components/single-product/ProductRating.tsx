@@ -1,6 +1,7 @@
 import { FaStar } from 'react-icons/fa6';
 
-export default function ({ productId }: { productId: string }) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default function ProductRating({ productId }: { productId: string }) {
   // temp
   const rating = 4.2;
   const count = 25;

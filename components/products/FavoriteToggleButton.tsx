@@ -3,6 +3,7 @@ import { FaHeart } from 'react-icons/fa6';
 import { Button } from '../ui/button';
 
 export default function FavoriteToggleButton({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   productId,
 }: {
   productId: string;
