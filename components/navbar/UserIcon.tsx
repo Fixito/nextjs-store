@@ -1,6 +1,6 @@
 import { currentUser } from '@clerk/nextjs/server';
 
-import { LuUser2 } from 'react-icons/lu';
+import { LuUser } from 'react-icons/lu';
 
 export default async function UserIcon() {
   const user = await currentUser();
@@ -18,5 +18,5 @@ export default async function UserIcon() {
     );
   }
 
-  return <LuUser2 className="h-6 w-6 rounded-full bg-primary text-white" />;
+  return <LuUser className="h-6 w-6 rounded-full bg-primary text-white" />;
 }
