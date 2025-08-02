@@ -17,7 +17,7 @@ export default function PriceInput({ defaultValue }: FormInputNumberProps) {
         type="number"
         id={name}
         name={name}
-        min={0}
+        min={1}
         defaultValue={defaultValue || 100}
         required
       />
