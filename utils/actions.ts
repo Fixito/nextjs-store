@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import db from '@/utils/db';
 import { currentUser } from '@clerk/nextjs/server';
 import { imageSchema, productSchema, validateWithZodSchema } from './schemas';
+import { uploadImage } from './supabase';
 
 async function getAuthentUser() {
   const user = await currentUser();
@@ -23,6 +24,9 @@ export async function fetchFeaturedProducts() {
   const products = await db.product.findMany({
     where: {
       featured: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
     },
   });
 
@@ -65,19 +69,20 @@ export async function createProductAction(
     const rawData = Object.fromEntries(formData.entries());
     const file = formData.get('image') as File;
     const validatedFields = validateWithZodSchema(productSchema, rawData);
-    const validateFile = validateWithZodSchema(imageSchema, { image: file });
-    console.log('🚀 ~ createProductAction ~ validateFile:', validateFile);
+    const validatedFile = validateWithZodSchema(imageSchema, { image: file });
+    const fullPath = await uploadImage(validatedFile.image);
+    console.log('🚀 ~ createProductAction ~ fullPath:', fullPath);
 
     await db.product.create({
       data: {
         ...validatedFields,
-        image: "/images/product-3.jpg",
+        image: fullPath,
         clerkId: user.id,
       }
     })
-
-    return { message: "product created successfully" };
   } catch (error) {
     return renderError(error);
   }
+
+  redirect('/admin/products');
 };
