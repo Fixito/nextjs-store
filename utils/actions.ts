@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 
 import db from '@/utils/db';
 import { currentUser } from '@clerk/nextjs/server';
+import { revalidatePath } from 'next/cache';
 import { imageSchema, productSchema, validateWithZodSchema } from './schemas';
 import { uploadImage } from './supabase';
 
@@ -11,6 +12,12 @@ async function getAuthentUser() {
   const user = await currentUser();
   if (!user) redirect('/');
   return user
+}
+
+async function getAdminUser() {
+  const user = await getAuthentUser();
+  if (user.id !== process.env.ADMIN_USER_ID) redirect('/');
+  return user;
 }
 
 function renderError(error: unknown): { message: string } {
@@ -86,3 +93,31 @@ export async function createProductAction(
 
   redirect('/admin/products');
 };
+
+export async function fetchAdminProducts() {
+  await getAdminUser();
+
+  return db.product.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+}
+
+export async function deleteProductAction(prevState: { productId: string }) {
+  const { productId } = prevState
+  await getAdminUser();
+
+  try {
+    await db.product.delete({
+      where: {
+        id: productId,
+      },
+    });
+    revalidatePath('/admin/products');
+    return { message: "product removed" }
+  } catch (error) {
+    return renderError(error);
+  }
+
+}
